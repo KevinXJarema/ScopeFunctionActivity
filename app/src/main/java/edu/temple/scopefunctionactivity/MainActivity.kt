@@ -14,10 +14,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.d("getTestDataArray output", getTestDataArray().toString())
-        // You can test your helper functions by  calling them from onCreate() and
-        // printing their output to the Log, which is visible in the LogCat:
-        // eg. Log.d("function output", getTestDataArray().toString())
 
+        val listOfN = listOf(1.0,2.0,3.0,4.0,5.0)
+        Log.d("Average less than median test output", averageLessThanMedian(listOfN).toString())
+
+        val context = applicationContext
+        val collection = listOf(2,4,5,6,7)
+        val recycledView: View? = null
+
+        val view = getView(2, recycledView, collection, context)
+        Log.d("Test for getView output", "View: $view")
     }
 
 
@@ -31,32 +37,20 @@ class MainActivity : AppCompatActivity() {
     private fun getTestDataArray() = MutableList(10){Random.nextInt()}.apply {sort()}
 
     // Return true if average value in list is greater than median value, false otherwise
-    private fun averageLessThanMedian(listOfNumbers: List<Double>): Boolean {
-        val avg = listOfNumbers.average()
-        val sortedList = listOfNumbers.sorted()
-        val median = if (sortedList.size % 2 == 0)
-            (sortedList[sortedList.size / 2] + sortedList[(sortedList.size - 1) / 2]) / 2
-        else
-            sortedList[sortedList.size / 2]
-
-        return avg < median
+    private fun averageLessThanMedian(listOfNumbers: List<Double>) = listOfNumbers.average()< listOfNumbers.sorted().run {
+        val center = size/2
+        if(center%2==0) (get(center) + get(center-1))/2 else get(center).toDouble()
     }
+
+
 
     // Create a view from an item in a collection, but recycle if possible (similar to an AdapterView's adapter)
-    private fun getView(position: Int, recycledView: View?, collection: List<Int>, context: Context): View {
-        val textView: TextView
+    private fun getView(position: Int, recycledView: View?, collection: List<Int>, context: Context) =
+        (recycledView as? TextView?: TextView(context).apply {
+            setPadding(5,10,10,0)
+            textSize = 22f
+        }).apply { text = collection[position].toString() }
 
-        if (recycledView != null) {
-            textView = recycledView as TextView
-        } else {
-            textView = TextView(context)
-            textView.setPadding(5, 10, 10, 0)
-            textView.textSize = 22f
-        }
 
-        textView.text = collection[position].toString()
-
-        return textView
-    }
 
 }
